@@ -17,6 +17,9 @@ python -u run.py \
   --dec_in 7 \
   --c_out 7 \
   --des 'Exp' \
+  --use_sig_loss \
+  --lambda_sig 0.5 \
+  --sig_loss_depth 3 \
   --d_model 256 \
   --d_state 2\
   --d_ff 256 \

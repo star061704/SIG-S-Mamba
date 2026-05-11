@@ -19,7 +19,7 @@ python -u run.py \
   --d_model 512 \
   --d_ff 512 \
   --d_state 16 \
-  --train_epochs 5 \
+  --train_epochs 15 \
   --batch_size 16 \
   --learning_rate 0.001 \
   --itr 1
@@ -41,7 +41,7 @@ python -u run.py \
   --d_model 512 \
   --d_ff 512 \
   --batch_size 16 \
-  --train_epochs 5 \
+  --train_epochs 15 \
   --learning_rate 0.0005 \
   --itr 1
   python -u run.py \
@@ -62,7 +62,7 @@ python -u run.py \
   --d_model 512 \
   --d_ff 512 \
   --batch_size 16 \
-  --train_epochs 5 \
+  --train_epochs 15 \
   --learning_rate 0.0005 \
   --itr 1
   python -u run.py \
@@ -82,7 +82,7 @@ python -u run.py \
   --des 'Exp' \
   --d_model 512 \
   --d_ff 512 \
-  --train_epochs 5 \
+  --train_epochs 3 \
   --batch_size 16 \
   --learning_rate 0.0005 \
   --itr 1

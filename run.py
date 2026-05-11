@@ -1,3 +1,5 @@
+import os
+os.environ['KERAS_BACKEND'] = 'torch'
 import argparse
 import torch
 from experiments.exp_long_term_forecasting import Exp_Long_Term_Forecast
@@ -34,7 +36,8 @@ if __name__ == '__main__':
     parser.add_argument('--seq_len', type=int, default=96, help='input sequence length')
     parser.add_argument('--label_len', type=int, default=48, help='start token length') # no longer needed in inverted Transformers
     parser.add_argument('--pred_len', type=int, default=96, help='prediction sequence length')
-
+    parser.add_argument('--signature_pca_dim', type=int, default=3,
+                   help='PCA dimension for signature computation')
     # model define
     parser.add_argument('--enc_in', type=int, default=7, help='encoder input size')
     parser.add_argument('--dec_in', type=int, default=7, help='decoder input size')
@@ -60,14 +63,39 @@ if __name__ == '__main__':
     parser.add_argument('--num_workers', type=int, default=10, help='data loader num workers')
     parser.add_argument('--itr', type=int, default=1, help='experiments times')
     parser.add_argument('--train_epochs', type=int, default=10, help='train epochs')
-    parser.add_argument('--batch_size', type=int, default=32, help='batch size of train input data')
+    parser.add_argument('--batch_size', type=int, default=16, help='batch size of train input data')
     parser.add_argument('--patience', type=int, default=3, help='early stopping patience')
     parser.add_argument('--learning_rate', type=float, default=0.0001, help='optimizer learning rate')
     parser.add_argument('--des', type=str, default='test', help='exp description')
     parser.add_argument('--loss', type=str, default='MSE', help='loss function')
     parser.add_argument('--lradj', type=str, default='type1', help='adjust learning rate')
     parser.add_argument('--use_amp', action='store_true', help='use automatic mixed precision training', default=False)
+    parser.add_argument('--use_signature', action='store_true', default=False, 
+                        help='whether to use path signature enhancement')
+    parser.add_argument('--signature_depth', type=int, default=3, 
+                        help='depth of path signature computation')
+    parser.add_argument('--signature_fusion', type=str, default='concat', 
+                        help='signature fusion method: [concat, gated, add]')
+    parser.add_argument('--use_sigkernel_loss', action='store_true', default=False,
+                    help='use signature kernel adaptive loss')
+    parser.add_argument('--sig_window_size', type=int, default=10,
+                    help='window size for signature comparison')
+    parser.add_argument('--signature_window_size', type=int, default=8,
+                    help='window size for progressive signature computation')
+    parser.add_argument('--sig_temperature', type=float, default=1.0,
+                    help='temperature parameter for adaptive weighting')
 
+# 在这里添加新参数
+    parser.add_argument('--sigkernel_signature_depth', type=int, default=3,
+                    help='signature depth for SigKernel loss computation')
+    parser.add_argument('--signature_cache_size', type=int, default=1000,
+                help='maximum size of signature cache for performance optimization')
+    parser.add_argument('--history_buffer_size', type=int, default=50,
+                    help='size of historical sequence buffer for adaptive weighting')
+    parser.add_argument('--use_progressive_signature', action='store_true', default=False,
+                    help='whether to use progressive path signature enhancement')
+    parser.add_argument('--signature_r2', type=int, default=3,
+                    help='learnable channel-reduction dimension r2 for feature_sig branch')
     # GPU
     parser.add_argument('--use_gpu', type=bool, default=True, help='use gpu')
     parser.add_argument('--gpu', type=int, default=0, help='gpu')
@@ -87,6 +115,23 @@ if __name__ == '__main__':
     parser.add_argument('--partial_start_index', type=int, default=0, help='the start index of variates for partial training, '
                                                                            'you can select [partial_start_index, min(enc_in + partial_start_index, N)]')
     parser.add_argument('--d_state', type=int, default=32, help='parameter of Mamba Block')
+
+    parser.add_argument('--use_sig_loss', action='store_true',
+                        help='use signature-based auxiliary loss')
+    parser.add_argument('--lambda_sig', type=float, default=1e-4,
+                        help='weight for signature loss')
+    parser.add_argument('--sig_loss_depth', type=int, default=2)
+    parser.add_argument('--sig_loss_leadlag', action='store_true')
+
+    parser.add_argument('--gate_init_alpha', type=float, default=0.5,
+                        help='initial alpha for dual_axis_sig gate (warm start from probe)')
+    parser.add_argument('--dual_aux_lambda', type=float, default=0.3,
+                        help='dual_axis_sig auxiliary loss weight on force_alpha=0/1 endpoints; '
+                             '0 disables, 0.3 recommended')
+    parser.add_argument('--two_stage_epochs', type=int, default=2,
+                        help='dual_axis_sig two-stage training: epochs of soft routing in stage 1; '
+                             'stage 2 commits to alpha=1 (if stage1_avg>0.5) or alpha=0 otherwise; '
+                             '0 disables two-stage')
 
     args = parser.parse_args()
     args.use_gpu = True if torch.cuda.is_available() and args.use_gpu else False

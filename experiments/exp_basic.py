@@ -3,7 +3,8 @@ import torch
 from model import Transformer, Informer, Reformer, Flowformer, Flashformer, \
     iTransformer, iInformer, iReformer, iFlowformer, iFlashformer, S_Mamba, \
     Flashformer_M, Flowformer_M, Autoformer, Autoformer_M, Transformer_M, \
-    Informer_M, Reformer_M
+    Informer_M, Reformer_M, time_sig_fast, \
+    feature_sig_fast, feature_deepsets_fast, feature_mlp_fast, dual_axis_sig
 
 
 class Exp_Basic(object):
@@ -15,10 +16,13 @@ class Exp_Basic(object):
             'iReformer': iReformer,
             'iFlowformer': iFlowformer,
             'iFlashformer': iFlashformer,
-
+            'time_sig_fast': time_sig_fast,
+            'dual_axis_sig': dual_axis_sig,
             'Transformer': Transformer,
             'Transformer_M': Transformer_M,
-
+            'feature_sig_fast': feature_sig_fast,
+            'feature_mlp_fast': feature_mlp_fast,
+            'feature_deepsets_fast': feature_deepsets_fast,
             'Informer': Informer,
             'Informer_M': Informer_M,
 

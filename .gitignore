@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Dataset (too large for GitHub; see README for download links)
+dataset/traffic/
+
+# Training outputs
+checkpoints/
+test_results/
+results/
+solar_order_logs/
+solar_r2_logs/
+
+# Experiment artefacts
+*.npy
+*.npz
+!dataset/**/*.npz
+profile_results_*.json
+profile_results_*.txt
+sig_diag_results.csv
+sig_levy_results.csv
+periodicity_window_results.csv
+result_long_term_forecast.txt
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db

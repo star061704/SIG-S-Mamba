@@ -1,6 +1,6 @@
 export CUDA_VISIBLE_DEVICES=0
 
-model_name=S_Mamba
+model_name=PatchTST
 # d_state = 32
 python -u run.py \
   --is_training 1 \
@@ -20,7 +20,7 @@ python -u run.py \
   --d_model 512 \
   --d_ff 512 \
   --learning_rate 0.001 \
-  --train_epochs 5 \
+  --train_epochs 15 \
   --itr 1
 
 python -u run.py \

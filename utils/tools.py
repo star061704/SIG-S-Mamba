@@ -25,16 +25,31 @@ def adjust_learning_rate(optimizer, epoch, args):
 
 
 class EarlyStopping:
-    def __init__(self, patience=7, verbose=False, delta=0):
+    def __init__(self, patience=7, verbose=False, delta=0, min_epochs=0):
         self.patience = patience
         self.verbose = verbose
         self.counter = 0
         self.best_score = None
         self.early_stop = False
-        self.val_loss_min = np.Inf
+        self.val_loss_min = np.inf
         self.delta = delta
+        # `min_epochs` calls are treated as warm-up: they neither set the
+        # best checkpoint nor count toward the early-stopping patience.
+        # This prevents an over-fit first epoch from locking in as the
+        # "best" model and from contributing to a premature stop.
+        self.min_epochs = min_epochs
+        self.epoch_count = 0
 
     def __call__(self, val_loss, model, path):
+        self.epoch_count += 1
+
+        # Warm-up: ignore this vali for best/save/early-stop purposes.
+        if self.epoch_count <= self.min_epochs:
+            if self.verbose:
+                print(f'[warm-up {self.epoch_count}/{self.min_epochs}] '
+                      f'val_loss={val_loss:.6f} (not eligible for best)')
+            return
+
         score = -val_loss
         if self.best_score is None:
             self.best_score = score
