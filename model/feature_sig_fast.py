@@ -1,18 +1,3 @@
-# Truly fast feature-axis signature, paper-aligned.
-#
-# Strategy: keras_sig.signature with stream=True returns the prefix signature
-# at every step in a single call -- this is exactly the Chen-identity-based
-# incremental update the paper invokes. We compute signatures for the FULL
-# V-axis path once, then index out the endpoints of each window. The previous
-# fast version called signature() K times (once per window), each time
-# recomputing prefixes from scratch; this version calls it once, total.
-#
-# Paper alignment:
-#   - learnable W_{r2} : R^D -> R^{r2}  (replacing the fixed mean)
-#   - time-augmented path of dimension r2+1
-#   - signature_dim = sum_{i=1..M} (r2+1)^i, matching d_sig(r2+1, M)
-#   - block-wise broadcast within C_k, matching S^{feat} = sum 1{v in C_k} S~_k
-
 import os
 os.environ['KERAS_BACKEND'] = 'torch'
 
