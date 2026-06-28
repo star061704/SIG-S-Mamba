@@ -1,16 +1,3 @@
-# Truly fast temporal-axis signature, drop-in replacement for time_sig.py.
-#
-# Mirrors the strategy in feature_sig_fast.py but along the time (L) axis on
-# raw input [B, L, N]:
-#   - keras_sig.signature(stream=True) ONCE for all prefixes of the full
-#     time-augmented path -> [B, L, sig_dim]
-#   - gather window endpoints and broadcast within each window block
-#   - fallback: per-window batched calls (no per-sample Python loop)
-#
-# Public surface (constructor signature, parameter names, output shape) is
-# identical to time_sig.TimeWindowProgressiveSignatureModule, so a checkpoint
-# trained with the original module can still be loaded here.
-
 import os
 os.environ['KERAS_BACKEND'] = 'torch'
 
